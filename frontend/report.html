@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Issue</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+  </script>
+
+  <style>
+    body {
+      background: #d7efea;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+    }
+
+    button {
+      background: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #map {
+      height: 300px;
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Report an Issue</h2>
+
+    <form id="issueForm">
+      <input type="text" id="title" placeholder="Issue Title" required />
+      <textarea id="description" placeholder="Describe the issue"></textarea>
+
+      <select id="category">
+        <option value="">Select category</option>
+        <option value="Road">Road</option>
+        <option value="Water">Water</option>
+        <option value="Electricity">Electricity</option>
+        <option value="Garbage">Garbage</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <div class="container">
+    <h3>Select Issue Location</h3>
+    <div id="map"></div>
+
+    <p>
+      Selected Location:
+      <strong><span id="coords">None</span></strong>
+    </p>
+  </div>
+
+  <!-- GLOBAL LOCATION VARIABLES -->
+  <script>
+    window.selectedLat = null;
+    window.selectedLng = null;
+  </script>
+
+  <!-- MAP SCRIPT -->
+  <script>
+    window.onload = function () {
+      const map = L.map("map").setView([20.5937, 78.9629], 5);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors"
+      }).addTo(map);
+
+      let marker = null;
+
+      map.on("click", function (e) {
+        window.selectedLat = e.latlng.lat;
+        window.selectedLng = e.latlng.lng;
+
+        if (marker) map.removeLayer(marker);
+
+        marker = L.marker([window.selectedLat, window.selectedLng]).addTo(map);
+
+        document.getElementById("coords").innerText =
+          window.selectedLat.toFixed(6) + ", " + window.selectedLng.toFixed(6);
+
+        console.log("Selected location:", window.selectedLat, window.selectedLng);
+      });
+    };
+  </script>
+
+  <script src="js/report.js"></script>
+
+</body>
+</html>
