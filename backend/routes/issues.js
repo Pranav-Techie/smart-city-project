@@ -1,3 +1,5 @@
+const auth = require("../middleware/auth");
+const adminOnly = require("../middleware/admin");
 const express = require("express");
 const router = express.Router();
 const Issue = require("../models/Issue");
@@ -12,7 +14,7 @@ CREATE ISSUE
 POST /api/issues
 ================================
 */
-router.post("/", async (req, res) => {
+router.post("/",auth, async (req, res) => {
   try {
     const { title, description, category, lat, lng } = req.body;
 
@@ -81,7 +83,7 @@ GET ALL ISSUES
 GET /api/issues
 ================================
 */
-router.get("/", async (req, res) => {
+router.get("/", auth, adminOnly, async (req, res) => {
   try {
     const issues = await Issue.find()
       .populate("reportedBy", "name email")
@@ -119,7 +121,7 @@ UPDATE ISSUE STATUS (ADMIN)
 PUT /api/issues/:id/status
 ================================
 */
-router.put("/:id/status", async (req, res) => {
+router.put("/:id/status", auth, adminOnly, async (req, res) => {
   try {
     const { status } = req.body;
 

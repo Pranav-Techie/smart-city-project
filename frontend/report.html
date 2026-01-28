@@ -56,24 +56,37 @@
 
 <body>
 
+  <!-- 🔐 LOGIN CHECK (ONLY ADDITION) -->
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
+      window.location.href = "login.html";
+    }
+  </script>
+
   <div class="container">
     <h2>Report an Issue</h2>
 
     <form id="issueForm">
-      <input type="text" id="title" placeholder="Issue Title" required />
-      <textarea id="description" placeholder="Describe the issue"></textarea>
+  <input type="text" id="title" placeholder="Issue Title" required />
+  <input type="file" id="image" accept="image/*" />
+  <textarea id="description" placeholder="Describe the issue"></textarea>
 
-      <select id="category">
-        <option value="">Select category</option>
-        <option value="Road">Road</option>
-        <option value="Water">Water</option>
-        <option value="Electricity">Electricity</option>
-        <option value="Garbage">Garbage</option>
-        <option value="Other">Other</option>
-      </select>
+  <select id="category">
+    <option value="">Select category</option>
+    <option value="Road">Road</option>
+    <option value="Water">Water</option>
+    <option value="Electricity">Electricity</option>
+    <option value="Garbage">Garbage</option>
+    <option value="Other">Other</option>
+  </select>
 
-      <button type="submit">Submit</button>
-    </form>
+  <input type="file" id="image" accept="image/*" />
+
+  <button type="submit">Submit</button>
+</form>
+
   </div>
 
   <div class="container">

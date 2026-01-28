@@ -1,72 +1,129 @@
 const form = document.getElementById("issueForm");
 
+if (!form) {
+  console.error("issueForm not found");
+}
+
+/* ===============================
+   FORM SUBMIT
+================================ */
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // 1️⃣ Check location
-  if (!window.selectedLat || !window.selectedLng) {
-    alert("Please select location on map");
+  // 1️⃣ Check map location
+  if (window.selectedLat === null || window.selectedLng === null) {
+    alert("❗ Please select a location on the map");
     return;
   }
 
   // 2️⃣ Get form values
-  const title = document.getElementById("title").value;
-  const description = document.getElementById("description").value;
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
   const category = document.getElementById("category").value;
+  const imageFile = document.getElementById("image")?.files[0];
+
+  if (!title || !description || !category) {
+    alert("❗ All fields are required");
+    return;
+  }
 
   // 3️⃣ Get token
   const token = localStorage.getItem("token");
   if (!token) {
-    alert("You are not logged in");
+    alert("❌ Please login first");
+    window.location.href = "login.html";
     return;
   }
 
   try {
-    // 4️⃣ Send request
-    const response = await fetch("http://localhost:8080/api/issues", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        title,
-        description,
-        category,
-        lat: window.selectedLat,
-        lng: window.selectedLng
-      })
-    });
+    /* ===============================
+       4️⃣ CREATE ISSUE
+    ================================ */
+    const issueRes = await fetch(
+      "https://smart-city-project-y8zq.onrender.com/api/issues",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          category,
+          lat: window.selectedLat,
+          lng: window.selectedLng
+        })
+      }
+    );
 
-    const data = await response.json();
+    const issueData = await issueRes.json();
+    console.log("📦 Issue response:", issueData);
 
-    if (!response.ok) {
-      alert(data.msg || "Something went wrong");
+    if (!issueRes.ok) {
+      alert(issueData.msg || "❌ Issue creation failed");
       return;
     }
 
+    /* ===============================
+       5️⃣ UPLOAD IMAGE (OPTIONAL)
+    ================================ */
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      const imgRes = await fetch(
+        `https://smart-city-project-y8zq.onrender.com/api/issues/${issueData.issue._id}/image`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+        }
+      );
+
+      if (!imgRes.ok) {
+        console.warn("⚠️ Image upload failed (issue still created)");
+      }
+    }
+
+    /* ===============================
+       6️⃣ SUCCESS UI RESET
+    ================================ */
     alert("✅ Issue reported successfully");
 
     form.reset();
     document.getElementById("coords").innerText = "None";
+    window.selectedLat = null;
+    window.selectedLng = null;
 
   } catch (error) {
-    console.error(error);
-    alert("Server error");
+    console.error("❌ Network / Server error:", error);
+    alert("❌ Server error. Please try again in 30 seconds.");
   }
 });
 
-// ✅ Phase 10 ready
-console.log("report.js loaded successfully");
-
+/* ===============================
+   SOCKET.IO (OPTIONAL / SAFE)
+================================ */
 if (typeof io !== "undefined") {
-  const socket = io("http://localhost:8080");
+  const socket = io("https://smart-city-project-y8zq.onrender.com", {
+    transports: ["websocket"],
+    reconnectionAttempts: 5
+  });
 
   socket.on("connect", () => {
     console.log("🔌 Socket connected:", socket.id);
   });
 
   socket.on("issueUpdated", (issue) => {
-    alert(`🔔 Issue "${issue.title}" status updated to ${issue.status}`);
+    alert(`🔔 Issue "${issue.title}" updated to ${issue.status}`);
+  });
+
+  socket.on("connect_error", () => {
+    console.warn("⚠️ Socket delayed (Render free tier sleep)");
   });
 }
+
+console.log("✅ report.js loaded successfully");
