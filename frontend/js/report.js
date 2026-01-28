@@ -1,3 +1,14 @@
+/* ===============================
+   🔐 GLOBAL AUTH GUARD (MUST BE FIRST)
+================================ */
+const authToken = localStorage.getItem("token");
+
+if (!authToken) {
+  alert("Please login or register first");
+  window.location.href = "login.html";
+  throw new Error("Blocked: user not logged in");
+}
+
 const form = document.getElementById("issueForm");
 
 if (!form) {
