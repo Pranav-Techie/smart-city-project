@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Report Issue</title>
 
+  <!-- 🔐 LOGIN GUARD (MUST BE FIRST) -->
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login or register first");
+      window.location.href = "login.html";
+    }
+  </script>
+
   <link rel="stylesheet" href="css/style.css" />
 
   <!-- Leaflet CSS -->
@@ -14,9 +23,7 @@
   />
 
   <!-- Leaflet JS -->
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-  </script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     body {
@@ -56,37 +63,28 @@
 
 <body>
 
-  <!-- 🔐 LOGIN CHECK (ONLY ADDITION) -->
-  <script>
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Please login first");
-      window.location.href = "login.html";
-    }
-  </script>
-
   <div class="container">
     <h2>Report an Issue</h2>
 
     <form id="issueForm">
-  <input type="text" id="title" placeholder="Issue Title" required />
-  <input type="file" id="image" accept="image/*" />
-  <textarea id="description" placeholder="Describe the issue"></textarea>
+      <input type="text" id="title" placeholder="Issue Title" required />
 
-  <select id="category">
-    <option value="">Select category</option>
-    <option value="Road">Road</option>
-    <option value="Water">Water</option>
-    <option value="Electricity">Electricity</option>
-    <option value="Garbage">Garbage</option>
-    <option value="Other">Other</option>
-  </select>
+      <!-- ✅ ONLY ONE IMAGE INPUT -->
+      <input type="file" id="image" accept="image/*" />
 
-  <input type="file" id="image" accept="image/*" />
+      <textarea id="description" placeholder="Describe the issue" required></textarea>
 
-  <button type="submit">Submit</button>
-</form>
+      <select id="category" required>
+        <option value="">Select category</option>
+        <option value="Road">Road</option>
+        <option value="Water">Water</option>
+        <option value="Electricity">Electricity</option>
+        <option value="Garbage">Garbage</option>
+        <option value="Other">Other</option>
+      </select>
 
+      <button type="submit">Submit</button>
+    </form>
   </div>
 
   <div class="container">
@@ -126,13 +124,10 @@
 
         document.getElementById("coords").innerText =
           window.selectedLat.toFixed(6) + ", " + window.selectedLng.toFixed(6);
-
-        console.log("Selected location:", window.selectedLat, window.selectedLng);
       });
     };
   </script>
 
   <script src="js/report.js"></script>
-
 </body>
 </html>
