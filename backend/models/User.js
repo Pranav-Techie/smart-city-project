@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
       required: true
     },
 
-    // ✅ PHASE 12.2 — ROLE (VERY IMPORTANT)
+    // PHASE 12.2 — ROLE (VERY IMPORTANT)
     role: {
       type: String,
       enum: ["user", "admin"],
@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
 );
 
 //
-// 🔐 HASH PASSWORD BEFORE SAVE
+// HASH PASSWORD BEFORE SAVE
 //
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {

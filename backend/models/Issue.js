@@ -18,10 +18,10 @@ const issueSchema = new mongoose.Schema(
     },
 
     image: {
-      type: String // Phase 8
+      type: String 
     },
 
-    // ✅ PHASE 9 — LOCATION (IMPORTANT)
+    
    location: {
   lat: Number,
   lng: Number

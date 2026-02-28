@@ -5,7 +5,7 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const authMiddleware = require("./middleware/authMiddleware");
 
-// ✅ SOCKET.IO IMPORTS
+// SOCKET.IO IMPORTS
 const http = require("http");
 const { Server } = require("socket.io");
 const socket = require("./socket");
@@ -19,6 +19,7 @@ connectDB();
 // ================= MIDDLEWARES =================
 app.use(cors());
 app.use(express.json());
+app.use("uploads", express.static("uploads"));
 
 // 🔍 Log every request (debugging)
 app.use((req, res, next) => {
@@ -59,10 +60,10 @@ const io = new Server(server, {
   }
 });
 
-// ✅ INITIALIZE SOCKET SAFELY
+// INITIALIZE SOCKET SAFELY
 socket.init(io);
 
-// 🔌 Handle socket connections
+// Handle socket connections
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 

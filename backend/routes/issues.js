@@ -1,11 +1,11 @@
-const auth = require("../middleware/auth");
+const auth = require("../middleware/authMiddleware");
 const adminOnly = require("../middleware/admin");
 const express = require("express");
 const router = express.Router();
 const Issue = require("../models/Issue");
 const upload = require("../middleware/upload");
 
-// ✅ SOCKET MANAGER (FIXED)
+// SOCKET MANAGER (FIXED)
 const socket = require("../socket");
 
 /*
@@ -143,7 +143,7 @@ router.put("/:id/status", auth, adminOnly, async (req, res) => {
       return res.status(404).json({ msg: "Issue not found" });
     }
 
-    // ✅ REAL-TIME EVENT
+    // REAL-TIME EVENT
     const io = socket.getIO();
     io.emit("issueUpdated", issue);
 
